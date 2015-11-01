@@ -9,12 +9,18 @@ from fabric.api import *
 from fabric.colors import green, red
 
 
+def safe_right(path):
+    sudo(r"find {path} -type d -exec chmod 0755 {rep} \;".format(rep='{}', path=path))
+    sudo(r"find {path} -type f -exec chmod 0644 {rep} \;".format(rep='{}', path=path))
+
 def config(lp, rp):
+    print(green("config:{}".format(rp)))
     sudo("rm -rf /tmp/conf")
     run("mkdir -p /tmp/conf/")
-    put(lp, "/tmp/conf/conf")
-    sudo('chown root:root /tmp/conf/conf')
-    sudo("mv -f /tmp/conf/conf '{}'".format(rp))
+    put(lp, "/tmp/conf/")
+    sudo('chown root:root -R /tmp/conf/')
+    safe_right('/tmp/conf')
+    sudo("mv -f /tmp/conf/* '{}'".format(rp))
 
 
 def install(names, su=True):

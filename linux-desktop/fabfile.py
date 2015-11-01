@@ -19,6 +19,12 @@ def deploy_base():
     install(['sudo', 'vim', 'zip'])
     config('config/vim.conf', '/etc/vim/vimrc')
     config('config/ssh/ssh_config', '/etc/ssh/')
+    sudo('mkdir -p /etc/bashrc.d/')
+    config('config/bashrc.d/prompt.sh', '/etc/bashrc.d/')
+    put("config/bashrc_init.inject", "/tmp/")
+    sudo("grep A3BE697D-5DC6-4D06-A24D-64C796B6677C /etc/bash.bashrc "
+         "|| cat /tmp/bashrc_init.inject >> /etc/bash.bashrc "
+         "&& echo inject bashrc loader!!!")
     deploy_script()
 
 

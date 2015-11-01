@@ -1,0 +1,10 @@
+# inject script by file @A3BE697D-5DC6-4D06-A24D-64C796B6677C
+
+if [ -d /etc/bashrc.d ]; then
+  for i in /etc/bashrc.d/*.sh; do
+    if [ -r $i ]; then
+      . $i
+    fi
+  done
+  unset i
+fi
