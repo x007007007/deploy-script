@@ -1,0 +1,30 @@
+config interface 'loopback'
+	option ifname 'lo'
+	option proto 'static'
+	option ipaddr '127.0.0.1'
+	option netmask '255.0.0.0'
+
+config globals 'globals'
+	option ula_prefix 'fd75:1d39:7352::/48'
+
+config interface 'lan'
+	option ifname 'eth1'
+	option force_link '1'
+	option type 'bridge'
+	option proto 'static'
+	option netmask '{lan_netmask}
+	option ip6assign '60'
+	option ipaddr '{lan_ipaddr}'
+	option dns '{lan_dns}'
+
+config interface 'wan'
+	option ifname 'eth0'
+	option _orig_ifname 'eth0'
+	option _orig_bridge 'false'
+	option proto 'pppoe'
+	option username '090011237653'
+	option password '147258'
+
+config interface 'wan6'
+	option ifname 'eth0'
+	option proto 'dhcpv6'
