@@ -1,0 +1,6 @@
+{
+  "localhost": {
+    "supervisor_inet_http_server": 18001,
+
+  }
+}
