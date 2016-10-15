@@ -6,17 +6,25 @@ from fabric.contrib import files
 from deploy_utils import instance_template
 
 
-def deploy_base_dev():
+def deploy_base():
     sudo("apt-get install -y vim python python3 virtualenv ")
 
 
-def deploy_supervisord():
+def deploy_supervisord(admin_addr=None):
+    """
+
+    :param admin_addr:
+    :return:
+    """
+    if admin_addr is None:
+        admin_addr = 'localhost:9001'
+
     run("mkdir -p ~/.config/supervisord/")
 
     with hide('warnings', 'running', 'stdout', 'stderr'):
         home = run("echo $HOME")
 
-    with instance_template("./conf/supervisord.conf", HOME=home) as tpl:
+    with instance_template("./conf/supervisord.conf", HOME=home, admin_addr=admin_addr) as tpl:
         put(tpl, "~/.config/supervisord/supervisord.conf")
 
     if not files.exists("~/.virtualenvs/supervisord"):
