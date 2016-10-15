@@ -1,0 +1,1 @@
+from .template import instance_template
