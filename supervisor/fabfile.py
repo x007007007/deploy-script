@@ -11,10 +11,11 @@ def deploy_base():
     sudo("apt-get install -y vim python python3 virtualenv ")
 
 
-def deploy_home_pycommon(supervisor_admin_port=None, pip_port=83141):
+def deploy_home_pycommon(supervisor_admin_port=None, pip_port=3141):
     """
 
     :param supervisor_admin_port: supervisor admin port default is localhost:9001
+    :param pip_port: default 3141 for pip proxy
     :return:
     """
     if supervisor_admin_port is None:
@@ -23,8 +24,8 @@ def deploy_home_pycommon(supervisor_admin_port=None, pip_port=83141):
     run("mkdir -p ~/.config/supervisord/")
 
     with hide('warnings', 'running', 'stdout', 'stderr'):
-        home = run("echo $HOME")
-        user = run("whoami")
+        home = run("echo $HOME").strip()
+        user = run("whoami").strip()
 
 
     if not files.exists("~/.virtualenvs/common2"):
@@ -50,7 +51,7 @@ def deploy_home_pycommon(supervisor_admin_port=None, pip_port=83141):
             put(tpl, "~/.config/supervisord/supervisord.conf")
 
         with hide('warnings', 'running', 'stdout', 'stderr'):
-            cmd = run("which devpi-server")
+            cmd = run("which devpi-server").strip()
 
         with instance_template(
             "./conf/supervisord.conf.d/devpi_server.conf",
