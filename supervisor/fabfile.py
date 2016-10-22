@@ -35,13 +35,18 @@ def deploy_home_pycommon(supervisor_admin_port=None, pip_port=83141):
         run("mkdir -p ~/.virtualenvs/")
         run("virtualenv -p `which python3` ~/.virtualenvs/common3")
     with prefix("source {home}/.virtualenvs/common2/bin/activate".format(home=home)):
-        run("pip install --upgrade pip")
-        run("pip install --upgrade supervisor")
-        run("pip install --upgrade virtualenv")
-        run("pip install --upgrade devpi-server")
-        run("pip install --upgrade devpi-web")
+        run("pip install pip")
+        run("pip install supervisor")
+        run("pip install virtualenv")
+        run("pip install devpi-server")
+        run("pip install devpi-web")
 
-        with instance_template("./conf/supervisord.conf", HOME=home, admin_addr=supervisor_admin_port) as tpl:
+        with instance_template(
+            "./conf/supervisord.conf",
+            HOME=home,
+            admin_addr=supervisor_admin_port,
+            USER=user
+        ) as tpl:
             put(tpl, "~/.config/supervisord/supervisord.conf")
 
         with hide('warnings', 'running', 'stdout', 'stderr'):
@@ -54,16 +59,17 @@ def deploy_home_pycommon(supervisor_admin_port=None, pip_port=83141):
             USER=user,
             port=pip_port
         ) as tpl:
-            run("mkdir -p ~/.config/supervisord/supervisord.conf.d")
-            put(tpl, "~/.config/supervisord/supervisord.conf.d/")
+            run("mkdir -p ~/.config/supervisord/conf.d")
+            put(tpl, "~/.config/supervisord/conf.d/devpi_server.conf")
 
         try:
-            sudo("supervisorctl reload -c {home}/.config/supervisord/supervisord.conf".format(home=home))
+            sudo("supervisorctl -c {home}/.config/supervisord/supervisord.conf reload".format(home=home))
         except:
             sudo("supervisord -c {home}/.config/supervisord/supervisord.conf".format(home=home))
 
         with instance_template("./conf/pip/pip.conf", port=pip_port) as tpl:
-            run("mkdir ~/.pip")
+            if not files.exists("~/.pip"):
+                run("mkdir ~/.pip")
             put(tpl, "~/.pip/pip.conf")
 
         with instance_template("./conf/pydistutils.cfg", port=pip_port) as tpl:
