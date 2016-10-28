@@ -56,7 +56,7 @@ def deploy_home_pycommon(supervisor_admin_port=None, pip_port=3141):
         with instance_template(
             "./conf/supervisord.conf.d/devpi_server.conf",
             CMD=cmd,
-            SERVER_DIR="/.virtualenvs/tmp",
+            SERVER_DIR="{}/.virtualenvs/tmp".format(home),
             USER=user,
             port=pip_port
         ) as tpl:
@@ -75,3 +75,4 @@ def deploy_home_pycommon(supervisor_admin_port=None, pip_port=3141):
 
         with instance_template("./conf/pydistutils.cfg", port=pip_port) as tpl:
             put(tpl, "~/.pydistutils.cfg")
+
