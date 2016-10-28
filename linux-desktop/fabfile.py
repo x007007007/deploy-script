@@ -13,6 +13,12 @@ from fabfile_base import install, config, FabricException, read_info
 env.password = "xxc"
 
 
+def deploy_vim():
+    install(["vim"])
+    put("../config/general/.vimrc", "~/.vimrc")
+    run("mkdir -p ~/.vim")
+    put("../config/general/.vim/*", "~/.vim/")
+    run("bash ~/.vim/init.sh")
 
 
 def deploy_base():
